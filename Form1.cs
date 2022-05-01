@@ -1,3 +1,6 @@
+using Microsoft.Data.SqlClient;
+using System.Data;
+
 namespace projektasSlaptazodziai
 {
     public partial class Form1 : Form
@@ -135,7 +138,6 @@ namespace projektasSlaptazodziai
                             {
                                 specialCharTimes = int.Parse(textBox5.Text);
                             }
-
                             else
                             {
                                 MessageBox.Show("Laukas Special Characters tuðèias arba áraðytas ne skaièius!");
@@ -148,16 +150,146 @@ namespace projektasSlaptazodziai
                             if (!emptyText) // Jeigu visi laukai aprasyti
                             {
                                 string generatedPassword = PasswordGenerator.GeneratePassword(capitalTimes, smallTimes, digitsTimes, specialCharTimes);
-                                MessageBox.Show("Sugeneruotas slaptaþodis: " + generatedPassword);
+                                MessageBox.Show("Slaptaþodis sugeneruotas!");
+                                textBox7.Text = generatedPassword; 
                             }
 
                         }
+                        else
+                        {
+                            MessageBox.Show("Ávestas slaptaþodis neteisingas!");
+                        }
+                }
+            }
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button3_Click(object sender, EventArgs e) // Irasymas i DB
+        {
+            string password = textBox1.Text;
+            string namePw = textBox6.Text;
+            string generatedPassword = textBox7.Text;
+
+            if (String.IsNullOrEmpty(password))
+            {
+                MessageBox.Show("Áveskite slaptaþodá!");
+            }
+            else
+            {
+                int dbEmpty = Database.CheckEmptyTable(connectionString);
+                if (dbEmpty == 0)
+                {
+                    MessageBox.Show("Sukurkite slaptaþodá!");
+                }
+                else
+                {
+                    bool result = Database.CheckCorrectPassword(connectionString, password); // Tikriname, ar slaptazodis vis dar ivestas
+                    if (result)
+                    {
+                        if (!String.IsNullOrEmpty(namePw) && !String.IsNullOrEmpty(generatedPassword)) // Jeigu viskas ok
+                        {
+                            Database.AddDataToDB(connectionString, namePw, generatedPassword);
+                            MessageBox.Show("Duomenys áraðyti á duomenø bazæ!");
+                        }
+                        else if (String.IsNullOrEmpty(namePw))
+                        {
+                            MessageBox.Show("Laukas Name tuðèias!");
+                        }
+                        else if (String.IsNullOrEmpty(generatedPassword))
+                        {
+                            MessageBox.Show("Laukas Generated password tuðèias!");
+                        }
+
+                    }
                     else
                     {
                         MessageBox.Show("Ávestas slaptaþodis neteisingas!");
                     }
                 }
             }
+        }
+        private void textBox6_TextChanged(object sender, EventArgs e) 
+        {
+
+        }
+        private void textBox7_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button4_Click(object sender, EventArgs e) // Ziureti DB irasus
+        {
+            string password = textBox1.Text;
+            string sqlQuery;
+            if (String.IsNullOrEmpty(password))
+            {
+                MessageBox.Show("Áveskite slaptaþodá!");
+            }
+            else
+            {
+                int dbEmpty = Database.CheckEmptyTable(connectionString);
+                if (dbEmpty == 0)
+                {
+                    MessageBox.Show("Sukurkite slaptaþodá!");
+                }
+                else
+                {
+                    bool result = Database.CheckCorrectPassword(connectionString, password); // Tikriname, ar slaptazodis vis dar ivestas
+                    if (result)
+                    {
+                        if (checkBox1.Checked)
+                        {
+                            sqlQuery = "SELECT * FROM generated_password";
+                        }
+                        else
+                        {
+                            sqlQuery = "SELECT id, pw_name, date_created, time_created FROM generated_password";
+                        }
+                        SqlConnection connection = new SqlConnection(connectionString);
+                        connection.Open();
+                        SqlCommand cmd = new SqlCommand(sqlQuery, connection);
+
+                        cmd.ExecuteNonQuery();
+                        SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        adapter.Fill(dt);
+                        dataGridView1.DataSource = dt;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Ávestas slaptaþodis neteisingas!");
+                    }
+                }
+            }
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }
