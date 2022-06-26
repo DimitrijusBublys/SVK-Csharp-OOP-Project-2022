@@ -291,5 +291,97 @@ namespace projektasSlaptazodziai
         {
 
         }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button5_Click(object sender, EventArgs e) // Atnaujinimas DB
+        {
+            string password = textBox1.Text;
+            string namePw = textBox6.Text;
+            string generatedPassword = textBox7.Text;
+
+            if (String.IsNullOrEmpty(password))
+            {
+                MessageBox.Show("Áveskite slaptaþodá!");
+            }
+            else
+            {
+                int dbEmpty = Database.CheckEmptyTable(connectionString);
+                if (dbEmpty == 0)
+                {
+                    MessageBox.Show("Sukurkite slaptaþodá!");
+                }
+                else
+                {
+                    bool result = Database.CheckCorrectPassword(connectionString, password); // Tikriname, ar slaptazodis vis dar ivestas
+                    if (result)
+                    {
+                        if (!String.IsNullOrEmpty(namePw) && !String.IsNullOrEmpty(generatedPassword)) // Jeigu viskas ok
+                        {
+                            Database.UpdateDataToDB(connectionString, namePw, generatedPassword);
+                        }
+                        else if (String.IsNullOrEmpty(namePw))
+                        {
+                            MessageBox.Show("Laukas Name tuðèias!");
+                        }
+                        else if (String.IsNullOrEmpty(generatedPassword))
+                        {
+                            MessageBox.Show("Laukas Generated password tuðèias!");
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Ávestas slaptaþodis neteisingas!");
+                    }
+                }
+            }
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            string password = textBox1.Text;
+            string namePw = textBox6.Text;
+            string generatedPassword = textBox7.Text;
+
+            if (String.IsNullOrEmpty(password))
+            {
+                MessageBox.Show("Áveskite slaptaþodá!");
+            }
+            else
+            {
+                int dbEmpty = Database.CheckEmptyTable(connectionString);
+                if (dbEmpty == 0)
+                {
+                    MessageBox.Show("Sukurkite slaptaþodá!");
+                }
+                else
+                {
+                    bool result = Database.CheckCorrectPassword(connectionString, password); // Tikriname, ar slaptazodis vis dar ivestas
+                    if (result)
+                    {
+                        if (!String.IsNullOrEmpty(namePw) && !String.IsNullOrEmpty(generatedPassword)) // Jeigu viskas ok
+                        {
+                            Database.DeleteDataToDB(connectionString, namePw, generatedPassword);
+                            MessageBox.Show("Duomenys atnaujinti!");
+                        }
+                        else if (String.IsNullOrEmpty(namePw))
+                        {
+                            MessageBox.Show("Laukas Name tuðèias!");
+                        }
+                        else if (String.IsNullOrEmpty(generatedPassword))
+                        {
+                            MessageBox.Show("Laukas Generated password tuðèias!");
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Ávestas slaptaþodis neteisingas!");
+                    }
+                }
+            }
+        }
     }
 }
